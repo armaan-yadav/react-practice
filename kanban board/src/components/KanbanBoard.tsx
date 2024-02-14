@@ -9,6 +9,7 @@ import {
   DragOverlay,
   DragStartEvent,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -16,14 +17,16 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { generateID } from "../utils/utils";
 import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
+import Navbar from "./Navbar";
 
 const KanbanBoard = () => {
   const temp1 = localStorage.getItem("Columns");
   const value1 = JSON.parse(temp1!);
   const temp2 = localStorage.getItem("Tasks");
   const value2 = JSON.parse(temp2!);
-  const [columns, setColumns] = useState<Column[]>(value1 || []);
-  const [tasks, setTasks] = useState<Task[]>(value2 || []);
+  const [columns, setColumns] = useState<Column[]>(value1);
+  const [tasks, setTasks] = useState<Task[]>(value2);
+
   const columnsId = useMemo(
     () => columns?.map((col: Column) => col.id),
     [columns]
@@ -35,9 +38,13 @@ const KanbanBoard = () => {
       activationConstraint: {
         distance: 3,
       },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        distance: 3,
+      },
     })
   );
-
   useEffect(() => {
     localStorage.setItem("Columns", JSON.stringify(columns));
   }, [columns]);
@@ -46,64 +53,67 @@ const KanbanBoard = () => {
   }, [tasks]);
 
   return (
-    <div className="flex items-center w-full min-h-screen overflow-y-hidden overflow-x-hidden-auto m-auto px-[40px]">
-      <DndContext
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onDragOver={onDragOver}
-        sensors={sensors}
-      >
-        <div className="m-auto flex gap-4">
-          <div className="flex gap-4">
-            <SortableContext items={columnsId}>
-              {columns?.map((col) => (
+    <>
+      <Navbar />
+      <div className="flex flex-col items-center w-full h-[calc(100vh-55px)]  overflow-y-hidden max-sm:overflow-y-auto overflow-x-auto max-sm:overflow-x-hidden m-auto max-sm:mt-5 ">
+        <DndContext
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          onDragOver={onDragOver}
+          sensors={sensors}
+        >
+          <div className="m-auto flex gap-4 px-[40px]  max-sm:flex-col">
+            <div className="flex gap-4 max-sm:flex-col">
+              <SortableContext items={columnsId}>
+                {columns?.map((col) => (
+                  <ColumnsContainer
+                    tasks={tasks.filter((task) => task.columnId === col.id)}
+                    column={col}
+                    deleteColumn={deleteColumn}
+                    updateTitle={updateTitle}
+                    createTask={createTask}
+                    deleteTask={deleteTask}
+                    updateTask={updateTask}
+                    key={col.id}
+                  />
+                ))}
+              </SortableContext>
+            </div>
+            <button
+              className="bg-primary w-[350px] h-[60px] ring-rose-400 hover:ring-1 rounded-lg cursor-pointer flex items-center gap-3 px-3"
+              onClick={() => createColumn()}
+            >
+              <Plus /> Add Column
+            </button>
+          </div>
+          {createPortal(
+            <DragOverlay>
+              {activeColumn && (
                 <ColumnsContainer
-                  tasks={tasks.filter((task) => task.columnId === col.id)}
-                  column={col}
+                  createTask={createColumn}
+                  column={activeColumn}
+                  updateTask={updateTask}
+                  tasks={tasks.filter(
+                    (task) => task.columnId === activeColumn.id
+                  )}
+                  deleteTask={deleteTask}
                   deleteColumn={deleteColumn}
                   updateTitle={updateTitle}
-                  createTask={createTask}
+                />
+              )}
+              {activeTask && (
+                <TaskCard
+                  task={activeTask}
                   deleteTask={deleteTask}
                   updateTask={updateTask}
-                  key={col.id}
                 />
-              ))}
-            </SortableContext>
-          </div>
-          <button
-            className="bg-primary w-[350px] h-[60px] ring-rose-400 hover:ring-1 rounded-lg cursor-pointer flex items-center gap-3 px-3"
-            onClick={() => createColumn()}
-          >
-            <Plus /> Add Column
-          </button>
-        </div>
-        {createPortal(
-          <DragOverlay>
-            {activeColumn && (
-              <ColumnsContainer
-                createTask={createColumn}
-                column={activeColumn}
-                updateTask={updateTask}
-                tasks={tasks.filter(
-                  (task) => task.columnId === activeColumn.id
-                )}
-                deleteTask={deleteTask}
-                deleteColumn={deleteColumn}
-                updateTitle={updateTitle}
-              />
-            )}
-            {activeTask && (
-              <TaskCard
-                task={activeTask}
-                deleteTask={deleteTask}
-                updateTask={updateTask}
-              />
-            )}
-          </DragOverlay>,
-          document.body
-        )}
-      </DndContext>
-    </div>
+              )}
+            </DragOverlay>,
+            document.body
+          )}
+        </DndContext>
+      </div>
+    </>
   );
 
   function createColumn() {
@@ -214,3 +224,14 @@ const KanbanBoard = () => {
 };
 
 export default KanbanBoard;
+
+/** const localColumns = JSON.parse(localStorage.getItem("Columns")!);
+    console.log(localColumns.length);
+    if (localColumns.length === 0) {
+      localStorage.setItem("Columns", JSON.stringify(defaultColumns));
+      console.log("first");
+    }
+    const localTasks = JSON.parse(localStorage.getItem("Columns")!);
+    if (localTasks.length === 0) {
+      localStorage.setItem("Tasks", JSON.stringify(defaultTasks));
+    } */
