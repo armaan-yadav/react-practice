@@ -24,9 +24,9 @@ const KanbanBoard = () => {
   const value1 = JSON.parse(temp1!);
   const temp2 = localStorage.getItem("Tasks");
   const value2 = JSON.parse(temp2!);
-  const [columns, setColumns] = useState<Column[]>(value1);
-  const [tasks, setTasks] = useState<Task[]>(value2);
-
+  const [columns, setColumns] = useState<Column[]>(value1 || []);
+  const [tasks, setTasks] = useState<Task[]>(value2 || []);
+  
   const columnsId = useMemo(
     () => columns?.map((col: Column) => col.id),
     [columns]
