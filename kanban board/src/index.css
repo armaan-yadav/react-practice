@@ -14,3 +14,19 @@ body,
 .flex-between {
   @apply flex items-center justify-between;
 }
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-rose-800;
+}
+
+.task >::-webkit-scrollbar-thumb {
+  @apply bg-sky-800;
+}
