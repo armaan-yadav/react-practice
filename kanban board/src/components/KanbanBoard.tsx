@@ -26,7 +26,7 @@ const KanbanBoard = () => {
   const value2 = JSON.parse(temp2!);
   const [columns, setColumns] = useState<Column[]>(value1 || []);
   const [tasks, setTasks] = useState<Task[]>(value2 || []);
-  
+
   const columnsId = useMemo(
     () => columns?.map((col: Column) => col.id),
     [columns]
@@ -62,8 +62,8 @@ const KanbanBoard = () => {
           onDragOver={onDragOver}
           sensors={sensors}
         >
-          <div className="m-auto flex gap-4 px-[40px]  max-sm:flex-col">
-            <div className="flex gap-4 max-sm:flex-col">
+          <div className="sm:m-auto flex gap-4 px-[40px]  max-sm:flex-col  max-sm:items-center">
+            <div className="flex gap-4 max-sm:flex-col  max-sm:w-[90%]">
               <SortableContext items={columnsId}>
                 {columns?.map((col) => (
                   <ColumnsContainer
@@ -80,7 +80,7 @@ const KanbanBoard = () => {
               </SortableContext>
             </div>
             <button
-              className="bg-primary w-[350px] h-[60px] ring-rose-400 hover:ring-1 rounded-lg cursor-pointer flex items-center gap-3 px-3"
+              className="bg-primary w-[350px] h-[60px] ring-rose-400 hover:ring-1 rounded-lg cursor-pointer flex items-center gap-3 px-3 "
               onClick={() => createColumn()}
             >
               <Plus /> Add Column

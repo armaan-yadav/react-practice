@@ -54,7 +54,7 @@ const ColumnsContainer = (props: Props) => {
   if (isDragging) {
     return (
       <div
-        className="w-[350px] max-h-[500px] h-[500px] max-sm:h-[250px] rounded-lg flex flex-col opacity-40 border-2 border-rose-400 bg-primary"
+        className="w-[350px] max-h-[500px] h-[500px] max-sm:h-[250px] rounded-lg flex flex-col opacity-40 border-2 border-rose-400 bg-primary max-sm:w-full"
         ref={setNodeRef}
         style={style}
       ></div>
@@ -63,7 +63,7 @@ const ColumnsContainer = (props: Props) => {
 
   return (
     <div
-      className="w-[350px] max-h-[500px] h-[500px] bg-primary rounded-lg flex flex-col max-sm:h-[350px]"
+      className="w-[350px] max-h-[500px] h-[500px] bg-primary rounded-lg flex flex-col max-sm:h-[350px] max-sm:w-full"
       ref={setNodeRef}
       style={style}
     >
